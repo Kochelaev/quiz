@@ -10,7 +10,7 @@ use App\DTO\AnswersDTO;
 use App\Service\QuizResultService;
 use PHPUnit\Framework\TestCase;
 
-class BaseQuizTest extends TestCase
+class RoundQuizTest  extends TestCase
 {
     protected $quizDTO;
     protected $answersDTO;
@@ -21,9 +21,8 @@ class BaseQuizTest extends TestCase
         $this->answersDTO = $this->makeAnswersDTO();
     }
 
-    public function testBasicTest()
+    public function testRoundTest()
     {
-        //$quiz = $this->makeQuizDTO();
 
         $quizResultService = new QuizResultService(
             $this->quizDTO,
@@ -32,26 +31,26 @@ class BaseQuizTest extends TestCase
 
         $result = $quizResultService->getResult();
 
-        $this->assertEquals(0.50, $result);
+        $this->assertEquals(0.67, $result);
     }
 
     protected function makeQuizDTO(): QuizDTO
     {
         $choice11 = new ChoiceDTO(
             '1-1-1',
-            'an elephant',
+            'True',
             true
         );
 
         $choice12 = new ChoiceDTO(
             '1-1-2',
-            'a mouse',
+            'False',
             false
         );
 
         $question1 = new QuestionDTO(
             '1-1',
-            'Who is bigger?'
+            'True or False?'
         );
 
         $question1->addChoice($choice11);
@@ -59,32 +58,53 @@ class BaseQuizTest extends TestCase
 
         $choice21 = new ChoiceDTO(
             '1-2-1',
-            'an elephant',
-            false
+            'True',
+            true
         );
 
         $choice22 = new ChoiceDTO(
             '1-2-2',
-            'a mouse',
-            true
+            'False',
+            false
         );
 
         $question2 = new QuestionDTO(
             '1-2',
-            'Who is smaller?'
+            'True or False?'
         );
 
         $question2->addChoice($choice21);
         $question2->addChoice($choice22);
 
+        $choice31 = new ChoiceDTO(
+            '1-3-1',
+            'True',
+            true
+        );
+
+        $choice32 = new ChoiceDTO(
+            '1-3-2',
+            'False',
+            false
+        );
+
+        $question3 = new QuestionDTO(
+            '1-3',
+            'True or False?'
+        );
+
+        $question3->addChoice($choice31);
+        $question3->addChoice($choice32);
+
 
         $quiz = new QuizDTO(
             '1',
-            'Animals'
+            'Round'
         );
 
         $quiz->addQuestion($question1);
         $quiz->addQuestion($question2);
+        $quiz->addQuestion($question3);
 
         return $quiz;
     }
@@ -103,11 +123,17 @@ class BaseQuizTest extends TestCase
         $answer1->addChoiceUUID($choices1[0]->getUUID());
         $answers->addAnswer($answer1);
 
-        //wrong answer
+        //correct answer
         $answer2 = new AnswerDTO($questions[1]->getUUID());
         $choices2 = $questions[1]->getChoices();
         $answer2->addChoiceUUID($choices2[0]->getUUID());
         $answers->addAnswer($answer2);
+
+        //wrong answer
+        $answer3 = new AnswerDTO($questions[2]->getUUID());
+        $choices3 = $questions[2]->getChoices();
+        $answer3->addChoiceUUID($choices3[1]->getUUID());
+        $answers->addAnswer($answer3);
 
         return $answers;
     }

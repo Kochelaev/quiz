@@ -23,6 +23,36 @@ class QuizResultService
 
     public function getResult(): float
     {
-        // your code here
+
+        $userAnswers = $this->answers->getAnswers();
+        foreach ($userAnswers as $answer) {
+            $questionId = $answer->getQuestionUUID();
+            $choice = $answer->getСhoices();
+            foreach ($choice as $ch) {
+                $userChoices[$questionId][$ch] = true;
+            }
+        }
+
+        $questionCount = 0;
+        $questions = $this->quiz->getQuestions();
+        $trueCount = 0;
+        foreach ($questions as $question) {
+            $questionCount++;
+            $questionId = $question->getUUID();
+            $choices = $question->getChoices();
+            $isCorrectAnswer = 1;
+            foreach ($choices as $ch) {
+                $ChoiceId = $ch->getUUID();
+                if ($ch->isCorrect()) {
+                    if (empty($userChoices[$questionId][$ChoiceId])) {
+                        $isCorrectAnswer = 0;
+                    }
+                } else if (!empty($userChoices[$questionId][$ChoiceId])) {
+                    $isCorrectAnswer = 0;
+                }
+            }
+            $trueCount += $isCorrectAnswer;
+        }
+        return round($trueCount / $questionCount, 2);
     }
 }
